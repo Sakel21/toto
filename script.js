@@ -10,7 +10,15 @@ const menuCategories = document.getElementById('menu-categories');
 const footerText = document.getElementById('footer-text');
 
 window.addEventListener('message', (event) => {
-    const data = event.data;
+    let data = event.data;
+    
+    if (typeof data === 'string') {
+        try {
+            data = JSON.parse(data);
+        } catch (e) {
+            return;
+        }
+    }
     
     switch (data.action) {
         case 'setMenuVisible':
