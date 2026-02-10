@@ -100,13 +100,38 @@ window.addEventListener('message', (event) => {
                 selectedItemIndex = selectedItemIndex < itemsCount - 1 ? selectedItemIndex + 1 : 0;
             }
             renderMenu();
+            scrollToSelected();
             break;
             
         case 'selectItem':
             selectCurrentItem();
             break;
+            
+        case 'goBack':
+            handleGoBack();
+            break;
     }
 });
+
+function handleGoBack() {
+    if (menuStack.length > 0) {
+        // On est dans un sous-menu, on retourne au menu précédent
+        goBack();
+    } else {
+        // On est au menu principal, on ferme le menu
+        sendToLua('closeMenu', {});
+    }
+}
+
+function scrollToSelected() {
+    const selectedItem = menuContent.querySelector('.menu-item.selected');
+    if (selectedItem) {
+        selectedItem.scrollIntoView({
+            behavior: 'smooth',
+            block: 'nearest'
+        });
+    }
+}
 
 function getItemsCount() {
     if (menuStack.length > 0) {
@@ -155,16 +180,6 @@ function renderCategories() {
 
 function renderMenu() {
     menuContent.innerHTML = '';
-    
-    if (menuStack.length > 0) {
-        const backBtn = document.createElement('div');
-        backBtn.className = 'back-button';
-        const backText = document.createElement('span');
-        backText.textContent = '← Back';
-        backBtn.appendChild(backText);
-        backBtn.onclick = () => goBack();
-        menuContent.appendChild(backBtn);
-    }
     
     const itemsToRender = getItemsToRender();
     
