@@ -86,7 +86,8 @@ function renderCategories() {
             category.textContent = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
             category.onclick = () => {
                 currentCategory = index;
-                openSubmenu(item, index);
+                renderCategories();
+                renderMenu();
             };
             menuCategories.appendChild(category);
         }
