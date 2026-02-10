@@ -31,7 +31,7 @@ echo.
 REM Add remote
 echo Adding remote origin...
 git remote remove origin 2>nul
-git remote add origin https://github.com/Sakel21/BZ-Menu.git
+git remote add origin https://github.com/Sakel21/test-.git
 echo.
 
 REM Push
@@ -45,16 +45,15 @@ if %errorlevel% equ 0 (
     echo ========================================
     echo.
     echo Your menu will be available at:
-    echo https://sakel21.github.io/BZ-Menu/
+    echo https://sakel21.github.io/test-/
     echo.
     echo Next steps:
-    echo 1. Go to: https://github.com/Sakel21/BZ-Menu/settings/pages
+    echo 1. Go to: https://github.com/Sakel21/test-/settings/pages
     echo 2. Under "Source", select "main" branch
     echo 3. Click "Save"
     echo 4. Wait 1-2 minutes for deployment
     echo.
-    echo Then update zizi.lua with:
-    echo https://sakel21.github.io/BZ-Menu/
+    echo Menu URL: https://sakel21.github.io/test-/
     echo.
 ) else (
     echo ========================================
@@ -62,7 +61,7 @@ if %errorlevel% equ 0 (
     echo ========================================
     echo.
     echo If this is your first push, the menu should be on GitHub now.
-    echo Check: https://github.com/Sakel21/BZ-Menu
+    echo Check: https://github.com/Sakel21/test-
     echo.
 )
 
