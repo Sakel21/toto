@@ -8,6 +8,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    cursor: default !important;
 }
 
 body {
@@ -93,7 +94,6 @@ body {
     font-size: 0.65vw;
     font-weight: 300;
     color: #fff;
-    cursor: pointer;
     transition: all 0.25s ease;
 }
 
@@ -131,7 +131,6 @@ body {
     max-height: 1.5625vw;
     justify-content: center;
     align-items: center;
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
@@ -192,7 +191,8 @@ body {
     position: absolute;
     display: flex;
     left: 0.15vw;
-    margin-bottom: 0.065vw;
+    top: 50%;
+    transform: translateY(-50%);
     width: 0.4167vw;
     height: 0.4167vw;
     background-color: #fff;
@@ -202,6 +202,7 @@ body {
 
 .toggle-switch.active::after {
     left: 0.95vw;
+    transform: translateY(-50%);
 }
 
 .slider-container {
@@ -214,7 +215,6 @@ body {
     align-items: center;
     background-color: #1e1e1e;
     border-radius: 0.2604vw;
-    cursor: pointer;
 }
 
 .slider-fill {
@@ -278,7 +278,6 @@ body {
     justify-content: center;
     align-items: center;
     background: rgba(var(--menu-color), 0.2);
-    cursor: pointer;
     transition: all 0.2s ease;
 }
 
