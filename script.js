@@ -2,9 +2,11 @@ let menuVisible = false;
 let currentMenu = [];
 let menuStack = [];
 let currentIndex = 0;
+let currentCategory = 0;
 
 const menuContainer = document.getElementById('menu-container');
 const menuContent = document.getElementById('menu-content');
+const menuCategories = document.getElementById('menu-categories');
 const footerText = document.getElementById('footer-text');
 
 window.addEventListener('message', (event) => {
@@ -23,6 +25,7 @@ window.addEventListener('message', (event) => {
         case 'setCurrent':
             currentMenu = data.menu || [];
             currentIndex = data.current || 1;
+            renderCategories();
             renderMenu();
             break;
             
@@ -33,12 +36,34 @@ window.addEventListener('message', (event) => {
         case 'setTheme':
             applyTheme(data.theme);
             break;
-            
-        case 'updateBreadcrumb':
-            updateBreadcrumb(data.breadcrumb);
-            break;
     }
 });
+
+function renderCategories() {
+    if (menuStack.length > 0) {
+        menuCategories.style.display = 'none';
+        return;
+    }
+    
+    menuCategories.style.display = 'flex';
+    menuCategories.innerHTML = '';
+    
+    currentMenu.forEach((item, index) => {
+        if (item.type === 'submenu') {
+            const category = document.createElement('div');
+            category.className = 'menu-category';
+            if (index === currentCategory) {
+                category.classList.add('active');
+            }
+            category.textContent = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
+            category.onclick = () => {
+                currentCategory = index;
+                openSubmenu(item, index);
+            };
+            menuCategories.appendChild(category);
+        }
+    });
+}
 
 function renderMenu() {
     menuContent.innerHTML = '';
@@ -46,28 +71,26 @@ function renderMenu() {
     if (menuStack.length > 0) {
         const backBtn = document.createElement('div');
         backBtn.className = 'back-button';
-        backBtn.textContent = '← Back';
+        const backText = document.createElement('span');
+        backText.textContent = '← Back';
+        backBtn.appendChild(backText);
         backBtn.onclick = () => goBack();
         menuContent.appendChild(backBtn);
     }
     
-    currentMenu.forEach((item, index) => {
+    const itemsToRender = menuStack.length > 0 ? currentMenu : (currentMenu[currentCategory]?.submenu || []);
+    
+    itemsToRender.forEach((item, index) => {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
-        if (index === currentIndex - 1) {
-            menuItem.classList.add('selected');
-        }
         
         const label = document.createElement('span');
         label.className = 'menu-item-label';
-        label.textContent = item.label;
+        label.textContent = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
         menuItem.appendChild(label);
         
         if (item.type === 'submenu') {
             menuItem.classList.add('submenu');
-            const arrow = document.createElement('span');
-            arrow.className = 'menu-item-value';
-            menuItem.appendChild(arrow);
             menuItem.onclick = () => openSubmenu(item, index);
         } else if (item.type === 'checkbox') {
             const toggle = document.createElement('div');
@@ -81,26 +104,22 @@ function renderMenu() {
             const sliderContainer = document.createElement('div');
             sliderContainer.className = 'slider-container';
             
-            const slider = document.createElement('div');
-            slider.className = 'slider';
-            
             const fill = document.createElement('div');
             fill.className = 'slider-fill';
             const percent = ((item.value - item.min) / (item.max - item.min)) * 100;
             fill.style.width = percent + '%';
-            slider.appendChild(fill);
+            sliderContainer.appendChild(fill);
             
             const value = document.createElement('span');
             value.className = 'slider-value';
             value.textContent = item.value.toFixed(1);
             
-            sliderContainer.appendChild(slider);
-            sliderContainer.appendChild(value);
             menuItem.appendChild(sliderContainer);
+            menuItem.appendChild(value);
             
-            slider.onclick = (e) => {
+            sliderContainer.onclick = (e) => {
                 e.stopPropagation();
-                const rect = slider.getBoundingClientRect();
+                const rect = sliderContainer.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const percent = x / rect.width;
                 const newValue = item.min + (item.max - item.min) * percent;
@@ -108,10 +127,9 @@ function renderMenu() {
                 updateSlider(item, index, steppedValue);
             };
         } else if (item.type === 'button') {
-            const btnLabel = document.createElement('span');
-            btnLabel.className = 'menu-item-value';
-            btnLabel.textContent = 'Execute';
-            menuItem.appendChild(btnLabel);
+            const icon = document.createElement('i');
+            icon.className = 'fas fa-play';
+            menuItem.appendChild(icon);
             menuItem.onclick = () => executeButton(item, index);
         }
         
@@ -121,9 +139,10 @@ function renderMenu() {
 
 function openSubmenu(item, index) {
     if (item.submenu) {
-        menuStack.push({ menu: currentMenu, index: currentIndex });
+        menuStack.push({ menu: currentMenu, index: currentIndex, category: currentCategory });
         currentMenu = item.submenu;
         currentIndex = 1;
+        renderCategories();
         renderMenu();
         sendToLua('submenuOpened', { label: item.label });
     }
@@ -134,6 +153,8 @@ function goBack() {
         const previous = menuStack.pop();
         currentMenu = previous.menu;
         currentIndex = previous.index;
+        currentCategory = previous.category;
+        renderCategories();
         renderMenu();
         sendToLua('submenuClosed', {});
     }
@@ -181,29 +202,16 @@ function GetParentResourceName() {
 function applyTheme(theme) {
     const root = document.documentElement;
     const themes = {
-        purple: { primary: '#8b5cf6', secondary: '#6366f1' },
-        blue: { primary: '#3b82f6', secondary: '#2563eb' },
-        orange: { primary: '#f97316', secondary: '#ea580c' },
-        pink: { primary: '#ec4899', secondary: '#db2777' }
+        purple: '139, 92, 246',
+        blue: '59, 130, 246',
+        orange: '249, 115, 22',
+        pink: '236, 72, 153',
+        red: '200, 0, 0'
     };
     
     if (themes[theme]) {
-        root.style.setProperty('--primary', themes[theme].primary);
-        root.style.setProperty('--secondary', themes[theme].secondary);
+        root.style.setProperty('--menu-color', themes[theme]);
     }
-}
-
-function updateBreadcrumb(text) {
-    let breadcrumb = document.querySelector('.breadcrumb');
-    if (!breadcrumb) {
-        breadcrumb = document.createElement('div');
-        breadcrumb.className = 'breadcrumb';
-        menuContainer.querySelector('.menu-wrapper').insertBefore(
-            breadcrumb, 
-            menuContent
-        );
-    }
-    breadcrumb.textContent = text;
 }
 
 document.addEventListener('keydown', (e) => {
@@ -211,3 +219,8 @@ document.addEventListener('keydown', (e) => {
         sendToLua('closeMenu', {});
     }
 });
+
+menuContent.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    menuContent.scrollTop += e.deltaY;
+}, { passive: false });
