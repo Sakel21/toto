@@ -219,8 +219,3 @@ document.addEventListener('keydown', (e) => {
         sendToLua('closeMenu', {});
     }
 });
-
-menuContent.addEventListener('wheel', (e) => {
-    e.preventDefault();
-    menuContent.scrollTop += e.deltaY;
-}, { passive: false });
