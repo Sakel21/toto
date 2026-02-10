@@ -4,12 +4,27 @@ echo BZ Menu - GitHub Push Script
 echo ========================================
 echo.
 
-REM Ask for GitHub username
-set /p github_user="Enter your GitHub username (e.g., Sakel21): "
-echo.
+REM Check if config exists
+if not exist ".github_config" (
+    echo Configuration not found!
+    echo Please run setup_github.bat first.
+    echo.
+    pause
+    exit /b 1
+)
 
-REM Ask for repository name
-set /p repo_name="Enter repository name (e.g., bzmenu): "
+REM Read configuration
+set /p github_user=<.github_config
+for /f "skip=1 tokens=*" %%a in (.github_config) do (
+    if not defined repo_name (
+        set repo_name=%%a
+    ) else if not defined github_token (
+        set github_token=%%a
+    )
+)
+
+echo Using GitHub account: %github_user%
+echo Repository: %repo_name%
 echo.
 
 REM Initialize git if not already done
@@ -35,33 +50,15 @@ echo Setting main branch...
 git branch -M main
 echo.
 
-REM Add remote origin
+REM Add remote origin with token
 echo Adding remote origin...
 git remote remove origin 2>nul
-git remote add origin https://github.com/%github_user%/%repo_name%.git
+git remote add origin https://%github_token%@github.com/%github_user%/%repo_name%.git
 echo.
-
-echo ========================================
-echo IMPORTANT: Authentication Required
-echo ========================================
-echo.
-echo GitHub now requires a Personal Access Token (PAT) instead of password.
-echo.
-echo If you don't have a token yet:
-echo 1. Go to: https://github.com/settings/tokens
-echo 2. Click "Generate new token" (classic)
-echo 3. Give it a name (e.g., "BZ Menu")
-echo 4. Select scope: "repo" (full control)
-echo 5. Click "Generate token"
-echo 6. Copy the token (you won't see it again!)
-echo.
-echo When prompted for password, paste your token instead.
-echo.
-pause
 
 REM Push to GitHub
 echo Pushing to GitHub...
-git push -u origin main
+git push -u origin main --force
 echo.
 
 if %errorlevel% equ 0 (
@@ -69,7 +66,7 @@ if %errorlevel% equ 0 (
     echo Push completed successfully!
     echo ========================================
     echo.
-    echo Your menu will be available at:
+    echo Your menu is available at:
     echo https://%github_user%.github.io/%repo_name%/
     echo.
     echo Next steps:
@@ -77,18 +74,19 @@ if %errorlevel% equ 0 (
     echo 2. Under "Source", select "main" branch
     echo 3. Click "Save"
     echo 4. Wait 1-2 minutes for deployment
-    echo 5. Update zizi.lua with the URL above
+    echo.
+    echo Update zizi.lua with this URL:
+    echo https://%github_user%.github.io/%repo_name%/
     echo.
 ) else (
     echo ========================================
     echo Push failed!
     echo ========================================
     echo.
-    echo Common issues:
-    echo - Wrong username or repository name
-    echo - Repository doesn't exist (create it first on GitHub)
-    echo - Authentication failed (use Personal Access Token)
-    echo - No permission (check repository ownership)
+    echo Please check:
+    echo - Repository exists on GitHub
+    echo - Token has correct permissions
+    echo - Internet connection is working
     echo.
 )
 

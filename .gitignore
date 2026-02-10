@@ -14,3 +14,6 @@ Thumbs.db
 # Backup files
 *.bak
 *~
+
+# GitHub credentials (NEVER push this!)
+.github_config
