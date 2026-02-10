@@ -36,6 +36,18 @@ window.addEventListener('message', (event) => {
         case 'setTheme':
             applyTheme(data.theme);
             break;
+            
+        case 'navigateCategory':
+            if (menuStack.length === 0) {
+                if (data.direction === 'left') {
+                    currentCategory = currentCategory > 0 ? currentCategory - 1 : currentMenu.length - 1;
+                } else if (data.direction === 'right') {
+                    currentCategory = currentCategory < currentMenu.length - 1 ? currentCategory + 1 : 0;
+                }
+                renderCategories();
+                renderMenu();
+            }
+            break;
     }
 });
 
