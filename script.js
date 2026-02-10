@@ -37,6 +37,14 @@ window.addEventListener('message', (event) => {
             applyTheme(data.theme);
             break;
             
+        case 'scroll':
+            if (data.direction === 'up') {
+                menuContent.scrollTop -= 50;
+            } else if (data.direction === 'down') {
+                menuContent.scrollTop += 50;
+            }
+            break;
+            
         case 'navigateCategory':
             if (menuStack.length === 0) {
                 if (data.direction === 'left') {
