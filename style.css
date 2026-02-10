@@ -150,6 +150,11 @@ body {
     background: rgba(var(--menu-color), 0.1);
 }
 
+.menu-item.selected {
+    background: rgba(var(--menu-color), 0.2);
+    border-left: 0.2vw solid rgb(var(--menu-color));
+}
+
 .menu-item-label {
     position: absolute;
     display: block;

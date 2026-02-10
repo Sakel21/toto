@@ -3,6 +3,7 @@ let currentMenu = [];
 let menuStack = [];
 let currentIndex = 0;
 let currentCategory = 0;
+let selectedItemIndex = 0;
 
 const menuContainer = document.getElementById('menu-container');
 const menuContent = document.getElementById('menu-content');
@@ -60,12 +61,36 @@ window.addEventListener('message', (event) => {
                 } else if (data.direction === 'right') {
                     currentCategory = currentCategory < currentMenu.length - 1 ? currentCategory + 1 : 0;
                 }
+                selectedItemIndex = 0;
                 renderCategories();
                 renderMenu();
             }
             break;
+            
+        case 'navigateItem':
+            const itemsCount = getItemsCount();
+            if (data.direction === 'up') {
+                selectedItemIndex = selectedItemIndex > 0 ? selectedItemIndex - 1 : itemsCount - 1;
+            } else if (data.direction === 'down') {
+                selectedItemIndex = selectedItemIndex < itemsCount - 1 ? selectedItemIndex + 1 : 0;
+            }
+            renderMenu();
+            break;
+            
+        case 'selectItem':
+            selectCurrentItem();
+            break;
     }
 });
+
+function getItemsCount() {
+    if (menuStack.length > 0) {
+        return currentMenu.length;
+    } else {
+        const category = currentMenu[currentCategory];
+        return category && category.submenu ? category.submenu.length : 0;
+    }
+}
 
 function renderCategories() {
     if (menuStack.length > 0) {
@@ -107,11 +132,23 @@ function renderMenu() {
         menuContent.appendChild(backBtn);
     }
     
-    const itemsToRender = menuStack.length > 0 ? currentMenu : (currentMenu[currentCategory]?.submenu || []);
+    let itemsToRender = [];
+    if (menuStack.length > 0) {
+        itemsToRender = currentMenu;
+    } else {
+        const category = currentMenu[currentCategory];
+        if (category && category.submenu) {
+            itemsToRender = category.submenu;
+        }
+    }
     
     itemsToRender.forEach((item, index) => {
         const menuItem = document.createElement('div');
         menuItem.className = 'menu-item';
+        
+        if (index === selectedItemIndex) {
+            menuItem.classList.add('selected');
+        }
         
         const label = document.createElement('span');
         label.className = 'menu-item-label';
@@ -168,9 +205,10 @@ function renderMenu() {
 
 function openSubmenu(item, index) {
     if (item.submenu) {
-        menuStack.push({ menu: currentMenu, index: currentIndex, category: currentCategory });
+        menuStack.push({ menu: currentMenu, index: currentIndex, category: currentCategory, selectedIndex: selectedItemIndex });
         currentMenu = item.submenu;
         currentIndex = 1;
+        selectedItemIndex = 0;
         renderCategories();
         renderMenu();
         sendToLua('submenuOpened', { label: item.label });
@@ -183,9 +221,33 @@ function goBack() {
         currentMenu = previous.menu;
         currentIndex = previous.index;
         currentCategory = previous.category;
+        selectedItemIndex = previous.selectedIndex || 0;
         renderCategories();
         renderMenu();
         sendToLua('submenuClosed', {});
+    }
+}
+
+function selectCurrentItem() {
+    let itemsToRender = [];
+    if (menuStack.length > 0) {
+        itemsToRender = currentMenu;
+    } else {
+        const category = currentMenu[currentCategory];
+        if (category && category.submenu) {
+            itemsToRender = category.submenu;
+        }
+    }
+    
+    const item = itemsToRender[selectedItemIndex];
+    if (!item) return;
+    
+    if (item.type === 'submenu') {
+        openSubmenu(item, selectedItemIndex);
+    } else if (item.type === 'checkbox') {
+        toggleCheckbox(item, selectedItemIndex);
+    } else if (item.type === 'button') {
+        executeButton(item, selectedItemIndex);
     }
 }
 
