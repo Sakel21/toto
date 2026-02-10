@@ -54,7 +54,7 @@ body {
     border-top-left-radius: 0.4167vw;
     border-top-right-radius: 0.4167vw;
     overflow: hidden;
-    background: linear-gradient(135deg, rgb(var(--menu-color)), rgba(var(--menu-color), 0.8));
+    background: linear-gradient(135deg, #0066ff, #0044cc);
 }
 
 .menu-title {
