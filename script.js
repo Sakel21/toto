@@ -56,14 +56,39 @@ window.addEventListener('message', (event) => {
             
         case 'navigateCategory':
             if (menuStack.length === 0) {
-                if (data.direction === 'left') {
-                    currentCategory = currentCategory > 0 ? currentCategory - 1 : currentMenu.length - 1;
-                } else if (data.direction === 'right') {
-                    currentCategory = currentCategory < currentMenu.length - 1 ? currentCategory + 1 : 0;
+                const itemsToRender = getItemsToRender();
+                const currentItem = itemsToRender[selectedItemIndex];
+                
+                if (currentItem && currentItem.type === 'slider') {
+                    if (data.direction === 'left') {
+                        const newValue = Math.max(currentItem.min, currentItem.value - currentItem.step);
+                        updateSlider(currentItem, selectedItemIndex, newValue);
+                    } else if (data.direction === 'right') {
+                        const newValue = Math.min(currentItem.max, currentItem.value + currentItem.step);
+                        updateSlider(currentItem, selectedItemIndex, newValue);
+                    }
+                } else {
+                    if (data.direction === 'left') {
+                        currentCategory = currentCategory > 0 ? currentCategory - 1 : currentMenu.length - 1;
+                    } else if (data.direction === 'right') {
+                        currentCategory = currentCategory < currentMenu.length - 1 ? currentCategory + 1 : 0;
+                    }
+                    selectedItemIndex = 0;
+                    renderCategories();
+                    renderMenu();
                 }
-                selectedItemIndex = 0;
-                renderCategories();
-                renderMenu();
+            } else {
+                const currentItem = currentMenu[selectedItemIndex];
+                
+                if (currentItem && currentItem.type === 'slider') {
+                    if (data.direction === 'left') {
+                        const newValue = Math.max(currentItem.min, currentItem.value - currentItem.step);
+                        updateSlider(currentItem, selectedItemIndex, newValue);
+                    } else if (data.direction === 'right') {
+                        const newValue = Math.min(currentItem.max, currentItem.value + currentItem.step);
+                        updateSlider(currentItem, selectedItemIndex, newValue);
+                    }
+                }
             }
             break;
             
@@ -89,6 +114,15 @@ function getItemsCount() {
     } else {
         const category = currentMenu[currentCategory];
         return category && category.submenu ? category.submenu.length : 0;
+    }
+}
+
+function getItemsToRender() {
+    if (menuStack.length > 0) {
+        return currentMenu;
+    } else {
+        const category = currentMenu[currentCategory];
+        return category && category.submenu ? category.submenu : [];
     }
 }
 
@@ -132,15 +166,7 @@ function renderMenu() {
         menuContent.appendChild(backBtn);
     }
     
-    let itemsToRender = [];
-    if (menuStack.length > 0) {
-        itemsToRender = currentMenu;
-    } else {
-        const category = currentMenu[currentCategory];
-        if (category && category.submenu) {
-            itemsToRender = category.submenu;
-        }
-    }
+    const itemsToRender = getItemsToRender();
     
     itemsToRender.forEach((item, index) => {
         const menuItem = document.createElement('div');
@@ -229,15 +255,7 @@ function goBack() {
 }
 
 function selectCurrentItem() {
-    let itemsToRender = [];
-    if (menuStack.length > 0) {
-        itemsToRender = currentMenu;
-    } else {
-        const category = currentMenu[currentCategory];
-        if (category && category.submenu) {
-            itemsToRender = category.submenu;
-        }
-    }
+    const itemsToRender = getItemsToRender();
     
     const item = itemsToRender[selectedItemIndex];
     if (!item) return;
