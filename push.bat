@@ -1,67 +1,57 @@
 @echo off
+chcp 65001 >nul
 echo ========================================
 echo BZ Menu - Push to GitHub
 echo ========================================
 echo.
 
-cd /d "%~dp0"
-
-REM Initialize git if needed
-if not exist ".git" (
-    echo Initializing Git repository...
-    git init
-    echo.
-)
-
-REM Add all files
 echo Adding files...
 git add .
-echo.
 
-REM Commit
+echo.
 echo Committing changes...
-git commit -m "Update BZ Menu - %date% %time%"
-echo.
+for /f "tokens=2-4 delims=/ " %%a in ('date /t') do (set mydate=%%c/%%b/%%a)
+for /f "tokens=1-2 delims=/:" %%a in ('time /t') do (set mytime=%%a:%%b)
+git commit -m "Update BZ Menu - %mydate% %mytime%"
 
-REM Set main branch
+echo.
 echo Setting main branch...
 git branch -M main
-echo.
 
-REM Add remote
+echo.
 echo Adding remote origin...
 git remote remove origin 2>nul
-git remote add origin https://github.com/Sakel21/test-.git
-echo.
+git remote add origin https://github.com/Sakel21/menu.git
 
-REM Push
-echo Pushing to GitHub...
-git push -u origin main
 echo.
+echo Pushing to GitHub...
+git push -u origin main --force
 
 if %errorlevel% equ 0 (
+    echo.
     echo ========================================
     echo SUCCESS! Menu pushed to GitHub
     echo ========================================
     echo.
     echo Your menu will be available at:
-    echo https://sakel21.github.io/test-/
+    echo https://sakel21.github.io/menu/
     echo.
     echo Next steps:
-    echo 1. Go to: https://github.com/Sakel21/test-/settings/pages
+    echo 1. Go to: https://github.com/Sakel21/menu/settings/pages
     echo 2. Under "Source", select "main" branch
     echo 3. Click "Save"
     echo 4. Wait 1-2 minutes for deployment
     echo.
-    echo Menu URL: https://sakel21.github.io/test-/
+    echo Menu URL: https://sakel21.github.io/menu/
     echo.
 ) else (
+    echo.
     echo ========================================
-    echo Push completed with warnings
+    echo FAILED! Could not push to GitHub
     echo ========================================
     echo.
-    echo If this is your first push, the menu should be on GitHub now.
-    echo Check: https://github.com/Sakel21/test-
+    echo When prompted for password, use your Personal Access Token
+    echo Get it from: https://github.com/settings/tokens
     echo.
 )
 
