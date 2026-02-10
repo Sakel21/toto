@@ -21,7 +21,7 @@ git branch -M main
 echo.
 echo Adding remote origin...
 git remote remove origin 2>nul
-git remote add origin https://github.com/Sakel21/Bouns.git
+git remote add origin https://github.com/Sakel21/thun.git
 
 echo.
 echo Pushing to GitHub...
@@ -34,15 +34,15 @@ if %errorlevel% equ 0 (
     echo ========================================
     echo.
     echo Your menu will be available at:
-    echo https://sakel21.github.io/Bouns/
+    echo https://sakel21.github.io/thun/
     echo.
     echo Next steps:
-    echo 1. Go to: https://github.com/Sakel21/Bouns/settings/pages
+    echo 1. Go to: https://github.com/Sakel21/thun/settings/pages
     echo 2. Under "Source", select "main" branch
     echo 3. Click "Save"
     echo 4. Wait 1-2 minutes for deployment
     echo.
-    echo Menu URL: https://sakel21.github.io/Bouns/
+    echo Menu URL: https://sakel21.github.io/thun/
     echo.
 ) else (
     echo.

@@ -284,8 +284,6 @@ function toggleCheckbox(item, index) {
         window.stamina = item.checked;
     } else if (label === 'Wallhack') {
         window.wallhack = item.checked;
-    } else if (label === 'ESP Lines') {
-        window.esp = item.checked;
     } else if (label === 'Anti Cuff') {
         window.anticuff = item.checked;
     } else if (label === 'No Reload') {
@@ -296,14 +294,6 @@ function toggleCheckbox(item, index) {
         window.rapidfire = item.checked;
     } else if (label === 'One Punch Man') {
         window.onePunch = item.checked;
-    } else if (label === 'Aimbot Enable') {
-        window.aimbot = item.checked;
-    } else if (label === 'Silent Aim') {
-        window.silentAim = item.checked;
-    } else if (label === 'Trigger Bot') {
-        window.triggerBot = item.checked;
-    } else if (label === 'Visible Check') {
-        window.visibleCheck = item.checked;
     } else if (label.includes('Farm Ours')) {
         window.farm = item.checked;
     } else if (label.includes('Sell Ours')) {
@@ -338,14 +328,6 @@ function updateSlider(item, index, value) {
         window.noclipSpeed = item.value;
     } else if (label === 'Run Speed') {
         window.runSpeed = item.value;
-    } else if (label === 'FOV') {
-        window.aimbotFov = item.value;
-    } else if (label === 'Distance') {
-        window.aimbotDistance = item.value;
-    } else if (label === 'Smoothing') {
-        window.aimbotSmooth = item.value;
-    } else if (label === 'Prediction') {
-        window.aimbotPrediction = item.value;
     }
     
     renderMenu();
@@ -354,9 +336,15 @@ function updateSlider(item, index, value) {
 function executeButton(item, index) {
     const label = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
     
-    if (label === 'Heal & Armor') {
+    if (label === 'Full Heal') {
         window.healPlayer = true;
         setTimeout(() => window.healPlayer = false, 100);
+    } else if (label === 'Max Armor') {
+        window.armorPlayer = true;
+        setTimeout(() => window.armorPlayer = false, 100);
+    } else if (label === 'Heal + Armor') {
+        window.healArmorPlayer = true;
+        setTimeout(() => window.healArmorPlayer = false, 100);
     } else if (label === 'Teleport') {
         window.teleportPlayer = true;
         setTimeout(() => window.teleportPlayer = false, 100);
