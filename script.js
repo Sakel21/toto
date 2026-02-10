@@ -191,29 +191,108 @@ function goBack() {
 
 function toggleCheckbox(item, index) {
     item.checked = !item.checked;
+    
+    const label = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
+    
+    if (label === 'God Mode' && menuStack.length > 0 && menuStack[0].menu[menuStack[0].category].label.includes('PLAYER')) {
+        window.godMode = item.checked;
+    } else if (label === 'NoClip') {
+        window.noclip = item.checked;
+    } else if (label === 'Invisible') {
+        window.invisible = item.checked;
+    } else if (label === 'Infinite Stamina') {
+        window.stamina = item.checked;
+    } else if (label === 'Wallhack') {
+        window.wallhack = item.checked;
+    } else if (label === 'ESP Lines') {
+        window.esp = item.checked;
+    } else if (label === 'Anti Cuff') {
+        window.anticuff = item.checked;
+    } else if (label === 'No Reload') {
+        window.noreload = item.checked;
+    } else if (label === 'Infinite Ammo') {
+        window.infammo = item.checked;
+    } else if (label === 'Rapid Fire') {
+        window.rapidfire = item.checked;
+    } else if (label === 'One Punch Man') {
+        window.onePunch = item.checked;
+    } else if (label === 'Aimbot Enable') {
+        window.aimbot = item.checked;
+    } else if (label === 'Silent Aim') {
+        window.silentAim = item.checked;
+    } else if (label === 'Trigger Bot') {
+        window.triggerBot = item.checked;
+    } else if (label === 'Visible Check') {
+        window.visibleCheck = item.checked;
+    } else if (label.includes('Farm Ours')) {
+        window.farm = item.checked;
+    } else if (label.includes('Sell Ours')) {
+        window.sell = item.checked;
+    } else if (label.includes('Farm Stalag')) {
+        window.stalag = item.checked;
+    } else if (label === 'Nitro Boost') {
+        window.nitro = item.checked;
+    } else if (label === 'Engine Always On') {
+        window.engineon = item.checked;
+    } else if (label.includes('God Mode') && menuStack.length > 0 && menuStack[0].menu[menuStack[0].category].label.includes('VEHICLE')) {
+        window.vehgod = item.checked;
+    } else if (label === 'Infinite Fuel') {
+        window.infuel = item.checked;
+    } else if (label === 'Glue Vehicle') {
+        window.glueVehicle = item.checked;
+    } else if (label === 'Vacuum Totem') {
+        window.vacuumTotem = item.checked;
+    } else if (label === 'Vehicle Carrier') {
+        window.vehicleCarrier = item.checked;
+    }
+    
     renderMenu();
-    sendToLua('checkboxToggled', { 
-        label: item.label, 
-        checked: item.checked,
-        index: index 
-    });
 }
 
 function updateSlider(item, index, value) {
     item.value = Math.max(item.min, Math.min(item.max, value));
+    
+    const label = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
+    
+    if (label === 'NoClip Speed') {
+        window.noclipSpeed = item.value;
+    } else if (label === 'Run Speed') {
+        window.runSpeed = item.value;
+    } else if (label === 'FOV') {
+        window.aimbotFov = item.value;
+    } else if (label === 'Distance') {
+        window.aimbotDistance = item.value;
+    } else if (label === 'Smoothing') {
+        window.aimbotSmooth = item.value;
+    } else if (label === 'Prediction') {
+        window.aimbotPrediction = item.value;
+    }
+    
     renderMenu();
-    sendToLua('sliderChanged', { 
-        label: item.label, 
-        value: item.value,
-        index: index 
-    });
 }
 
 function executeButton(item, index) {
-    sendToLua('buttonPressed', { 
-        label: item.label,
-        index: index 
-    });
+    const label = item.label.replace(/[🏠🔫🎯🚜🚗🤪]/g, '').trim();
+    
+    if (label === 'Heal & Armor') {
+        window.healPlayer = true;
+        setTimeout(() => window.healPlayer = false, 100);
+    } else if (label === 'Teleport') {
+        window.teleportPlayer = true;
+        setTimeout(() => window.teleportPlayer = false, 100);
+    } else if (label === 'Refill Ammo') {
+        window.refillAmmo = true;
+        setTimeout(() => window.refillAmmo = false, 100);
+    } else if (label === 'Repair') {
+        window.repairVehicle = true;
+        setTimeout(() => window.repairVehicle = false, 100);
+    } else if (label === 'Flip') {
+        window.flipVehicle = true;
+        setTimeout(() => window.flipVehicle = false, 100);
+    } else if (label === 'Delete') {
+        window.deleteVehicle = true;
+        setTimeout(() => window.deleteVehicle = false, 100);
+    }
 }
 
 function sendToLua(action, data) {
