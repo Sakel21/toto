@@ -54,15 +54,19 @@ body {
     border-top-left-radius: 0.4167vw;
     border-top-right-radius: 0.4167vw;
     overflow: hidden;
-    background: linear-gradient(135deg, #0066ff, #0044cc);
+    background-image: url('https://share.creavite.co/68dbd8a6377d6e26798ddccf.gif');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
 }
 
 .menu-title {
     font-size: 1.2vw;
     font-weight: 700;
     color: white;
-    text-shadow: 0 0.1vw 0.3vw rgba(0, 0, 0, 0.5);
+    text-shadow: 0 0.2vw 0.5vw rgba(0, 0, 0, 0.8);
     letter-spacing: 0.05vw;
+    z-index: 1;
 }
 
 .menu-categories {
